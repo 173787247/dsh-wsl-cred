@@ -1,0 +1,21 @@
+{
+  "name": "dsh-wsl-cred",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness tool: safe Git credential hints for Windows GCM from WSL.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/173787247/dsh-wsl-cred.git"
+  },
+  "bugs": {
+    "url": "https://github.com/173787247/dsh-wsl-cred/issues"
+  },
+  "homepage": "https://github.com/173787247/dsh-wsl-cred#readme",
+  "type": "module",
+  "main": "index.js",
+  "engines": { "node": ">=18" },
+  "scripts": { "test": "node --test test/cred.test.js" },
+  "files": ["index.js", "lib", "cordis.patch.yml", "README.md", "LICENSE"],
+  "keywords": ["dsh-plugin", "deepseek-harness", "wsl", "credential"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}
