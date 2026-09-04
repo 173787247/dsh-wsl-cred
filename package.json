@@ -1,7 +1,7 @@
 {
   "name": "dsh-wsl-cred",
-  "version": "0.1.0",
-  "description": "DeepSeek Harness tool: safe Git credential hints for Windows GCM from WSL.",
+  "version": "0.2.0",
+  "description": "Safe Git credential hints: GCM path, HTTPS vs SSH origin (never returns secrets).",
   "license": "MIT",
   "repository": {
     "type": "git",

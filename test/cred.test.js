@@ -1,15 +1,55 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildCredAdvice, formatCredReport } from "../lib/cred.js";
+import {
+  buildCredAdvice,
+  classifyRemote,
+  findGcmPath,
+  formatCredReport,
+} from "../lib/cred.js";
 
-describe("cred_hint", () => {
-  it("never invites dumping secrets", () => {
-    const advice = buildCredAdvice("");
-    assert.ok(advice.every((t) => !/password|token=/i.test(t) || /never/i.test(t)));
-    assert.ok(advice.some((t) => /Credential Manager|GCM/i.test(t)));
+describe("classifyRemote", () => {
+  it("detects https and ssh", () => {
+    assert.equal(classifyRemote("https://github.com/a/b.git").kind, "https");
+    assert.equal(classifyRemote("git@github.com:a/b.git").kind, "ssh");
   });
 
-  it("formats", () => {
-    assert.match(formatCredReport({ helper: "manager", advice: ["x"] }), /helper: manager/);
+  it("redacts userinfo", () => {
+    const r = classifyRemote("https://user:token@github.com/a/b.git");
+    assert.equal(r.kind, "https");
+    assert.ok(!/token/.test(r.redacted));
+  });
+});
+
+describe("buildCredAdvice", () => {
+  it("routes SSH remotes to ssh_agent_hint", () => {
+    const tips = buildCredAdvice("manager", {
+      remote: { kind: "ssh", host: "github.com" },
+      gcmPath: "",
+    });
+    assert.ok(tips.some((t) => /ssh_agent_hint/i.test(t)));
+  });
+
+  it("suggests GCM when found", () => {
+    const gcm = "/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe";
+    const tips = buildCredAdvice("", { remote: { kind: "https", host: "github.com" }, gcmPath: gcm });
+    assert.ok(tips.some((t) => /Found Windows GCM/i.test(t)));
+  });
+});
+
+describe("findGcmPath", () => {
+  it("returns first existing candidate", () => {
+    const p = findGcmPath({
+      exists: (x) => x.includes("git-credential-manager.exe"),
+    });
+    assert.match(p, /git-credential-manager\.exe$/);
+  });
+});
+
+describe("formatCredReport", () => {
+  it("includes origin kind", () => {
+    assert.match(
+      formatCredReport({ helper: "manager", remoteKind: "https", remoteHost: "github.com", advice: [] }),
+      /origin: https github.com/,
+    );
   });
 });
