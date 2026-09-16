@@ -10,6 +10,18 @@ Part of **[dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit)**.
 
 [中文说明 → README.zh.md](./README.zh.md)
 
+## Where it sits
+
+Hints whether Git credentials exist (GCM path, HTTPS vs SSH). It never returns secrets.
+
+```mermaid
+flowchart LR
+  agent["dsh agent"] --> tool["cred_hint"] --> git["Git credential presence"]
+```
+
+Suite diagram and version snapshot: [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit#how-the-pieces-fit). This plugin is **0.2.0** (github). Do not copy that matrix into this README.
+
+
 ---
 ## Compatibility
 
